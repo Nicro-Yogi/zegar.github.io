@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Odliczanie do spotkania</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #173155;
+            color: #95bf20;
+            font-family: Arial, sans-serif;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .logo img {
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+        
+        .title {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+        }
+        
+        .timer {
+            font-size: 6rem;
+            font-weight: bold;
+        }
+        
+        .message {
+            font-size: 4rem;
+            color: #95bf20;
+            display: none;
+        }
+        
+        .audio-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .audio-button {
+            background-color: transparent;
+            color: #95bf20;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+        
+        .audio-button:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <audio id="background-music" loop>
+            <source src="muzyka.mp3" type="audio/mpeg">
+            Twoja przeglądarka nie wspiera elementu audio.
+        </audio>
+        <div class="logo">
+            <img src="logo.png" alt="Logo firmy" style="margin-bottom: 2rem;">
+        </div>
+        <div class="title">Podsumowanie roku</div>
+        <div class="timer" id="timer"></div>
+        <div class="message" id="message">Rozpoczynamy!</div>
+    </div>
+
+    <script>
+        function updateTimer() {
+            const now = new Date();
+            const target = new Date();
+            target.setHours(19, 0, 0, 0);
+            
+            if (now >= target) {
+                document.getElementById('timer').style.display = 'none';
+                document.getElementById('message').style.display = 'block';
+                return;
+            }
+            
+            const diff = target - now;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('timer').textContent = 
+                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        updateTimer();
+        setInterval(updateTimer, 1000);
+
+        // Obsługa odtwarzacza
+        const audio = document.getElementById('background-music');
+        const audioButton = document.createElement('button');
+        audioButton.className = 'audio-button';
+        audioButton.textContent = '▶';
+        
+        audioButton.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                audioButton.textContent = '⏸';
+            } else {
+                audio.pause();
+                audioButton.textContent = '▶';
+            }
+        });
+
+        const audioControls = document.createElement('div');
+        audioControls.className = 'audio-controls';
+        audioControls.appendChild(audioButton);
+        document.body.appendChild(audioControls);
+    </script>
+</body>
+</html>
